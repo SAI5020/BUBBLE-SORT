@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Sort Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        #arrayList {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+            font-size: 20px;
+            display: inline-block;
+            width: 300px;
+        }
+
+        li {
+            margin: 10px;
+            padding: 5px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .highlight {
+            background-color: #ff5733 !important;
+        }
+
+        .swapped {
+            background-color: #ffeb3b !important;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bubble Sort Visualization</h1>
+        
+        <!-- Input for array -->
+        <input type="text" id="inputArray" placeholder="Enter numbers separated by commas">
+        
+        <!-- Button to start sorting -->
+        <button id="startButton">Start Sorting</button>
+
+        <!-- List to display the array -->
+        <ul id="arrayList"></ul>
+    </div>
+
+    <script>
+        let array = [];
+
+        // Function to display the array as a list
+        function displayArray() {
+            const list = document.getElementById('arrayList');
+            list.innerHTML = ''; // Clear the list before re-rendering
+
+            array.forEach((value, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = value;
+                listItem.setAttribute('id', `item-${index}`);
+                list.appendChild(listItem);
+            });
+        }
+
+        // Bubble Sort function with animation
+        async function bubbleSort() {
+            let n = array.length;
+            let swapped;
+
+            for (let i = 0; i < n - 1; i++) {
+                swapped = false;
+
+                for (let j = 0; j < n - i - 1; j++) {
+                    // Highlight the two elements being compared
+                    const firstItem = document.getElementById(`item-${j}`);
+                    const secondItem = document.getElementById(`item-${j + 1}`);
+                    firstItem.classList.add('highlight');
+                    secondItem.classList.add('highlight');
+
+                    // Wait for a short moment to visualize the comparison
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    if (array[j] > array[j + 1]) {
+                        // Swap the values in the array
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        displayArray(); // Re-render the list after swap
+                        swapped = true;
+
+                        // Apply "swapped" effect temporarily
+                        firstItem.classList.add('swapped');
+                        secondItem.classList.add('swapped');
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                        firstItem.classList.remove('swapped');
+                        secondItem.classList.remove('swapped');
+                    }
+
+                    // Remove the highlight after comparison
+                    firstItem.classList.remove('highlight');
+                    secondItem.classList.remove('highlight');
+                }
+
+                // If no elements were swapped, the array is already sorted
+                if (!swapped) break;
+            }
+        }
+
+        // Function to handle the input array and start the sorting process
+        document.getElementById('startButton').addEventListener('click', () => {
+            const input = document.getElementById('inputArray').value.trim();
+            // Parse input and create an array of numbers
+            array = input.split(',').map(num => parseInt(num.trim(), 10));
+
+            // Check if the array is valid
+            if (array.some(isNaN) || array.length === 0) {
+                alert("Please enter valid numbers separated by commas.");
+                return;
+            }
+
+            displayArray(); // Display the initial array
+            bubbleSort(); // Start the sorting process
+        });
+    </script>
+</body>
+</html>
